@@ -38,9 +38,15 @@ if __name__ == "__main__":
     )
 
     p.add_argument(
-        "--title", "-t",
+        "--threshold", "-t",
+        default="0.02",
+        help=r"minimum ratio that can display text (DEFAULT: 0.02)"
+    )
+
+    p.add_argument(
+        "--title",
         action="store_true", default=False,
-        help=r"make default titles"
+        help=r"make default titles (B/S and P/L)"
     )
 
     p.add_argument(
@@ -74,6 +80,8 @@ if __name__ == "__main__":
 
     if args.spines:
         fs.spines = True
+
+    fs.threshold = float(args.threshold)
 
     # 指定ファイルが 1 つのみの場合
     if len(files) == 1:

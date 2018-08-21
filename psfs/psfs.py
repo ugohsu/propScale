@@ -22,6 +22,9 @@ class Prop:
         # グラフの枠線
         self.spines = None
 
+        # テキスト表示閾値
+        self.threshold = None
+
         # setOptions の実行
         self.setOptions()
 
@@ -74,6 +77,14 @@ class Prop:
         else:
             self.spines = None
 
+        # テキスト表示閾値
+        if self.threshold:
+            pass
+        elif opt and "threshold" in opt.keys():
+            self.threshold = opt["threshold"]
+        else:
+            self.threshold = 0
+
         # BS タイトル (タイトル無しの場合は None とする)
         if self.bstitle:
             pass
@@ -99,17 +110,29 @@ class Prop:
 
         # keys に bs, pl の両方ともが含まれていない場合は
         # None を返す
-        if any(x not in self.keys for x in ("bs", "pl")):
+        if all(x not in self.keys for x in ("bs", "pl")):
             self.basis = None
 
-        # bs の assets 合計を取得
-        assets = sum(self.initial["bs"]["assets"].values())
+        # bs の資産合計もしくは負債合計の取得
+        if "bs" in self.keys:
+            bsbasis = max(
+                sum(self.initial["bs"]["assets"].values()),
+                sum(self.initial["bs"]["liabilities"].values())
+            )
+        else:
+            bsbasis = 0
 
-        # pl の income 合計を取得
-        income = sum(self.initial["pl"]["income"].values())
+        # pl の収益合計もしくは費用合計の取得
+        if "pl" in self.keys:
+            plbasis = max(
+                sum(self.initial["pl"]["income"].values()),
+                sum(self.initial["pl"]["expenses"].values())
+            )
+        else:
+            plbasis = 0
 
         # より大きな値の出力
-        self.basis = max(assets, income)
+        self.basis = max(bsbasis, plbasis)
 
 
     def prepare (self):
@@ -117,10 +140,11 @@ class Prop:
         作図の準備
         '''
 
+        self.getBasis()
+
         # bs および pl の両方が含まれている場合
         if all(x in self.keys for x in ("bs", "pl")):
 
-            self.getBasis()
             self.fig, (self.bs, self.pl) = plt.subplots(ncols=2)
             self.mkpsbs(self.bs, self.initial["bs"])
             self.mkpspl(self.pl, self.initial["pl"])
@@ -326,11 +350,14 @@ class Prop:
             )
 
             # テキストの挿入
-            tmplt.text(
-                left,
-                bottom + item[entry] / 2.0,
-                entry, ha="center", va="center"
-            )
+            if self.basis and (item[entry] / self.basis) < self.threshold:
+                pass
+            else:
+                tmplt.text(
+                    left,
+                    bottom + item[entry] / 2.0,
+                    entry, ha="center", va="center"
+                )
 
             # bottom のカウンタを進める
             bottom = bottom + item[entry]
