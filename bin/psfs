@@ -49,6 +49,12 @@ if __name__ == "__main__":
         help=r"hide ylabs"
     )
 
+    p.add_argument(
+        "--spines", "-s",
+        action="store_true", default=False,
+        help=r"hide spines"
+    )
+
     args = p.parse_args()
 
     # 実行
@@ -65,6 +71,9 @@ if __name__ == "__main__":
 
     if args.noylab:
         fs.noylab = True
+
+    if args.spines:
+        fs.spines = True
 
     # 指定ファイルが 1 つのみの場合
     if len(files) == 1:

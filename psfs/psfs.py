@@ -16,6 +16,12 @@ class Prop:
         self.bstitle = None
         self.pltitle = None
 
+        # y 軸のメモリ
+        self.noylab = None
+
+        # グラフの枠線
+        self.spines = None
+
         # setOptions の実行
         self.setOptions()
 
@@ -52,10 +58,21 @@ class Prop:
         plt.rcParams["axes.ymargin"] = 0
             
         # y 軸の表示の有無
-        if opt and "noylab" in opt.keys():
+        if self.noylab:
+            pass
+        elif opt and "noylab" in opt.keys():
             self.noylab = True
         else:
             self.noylab = False
+
+        # 枠線の有無
+        if self.spines:
+            plt.rcParams["axes.xmargin"] = 0.01
+        elif opt and "spines" in opt.keys():
+            self.spines = True
+            plt.rcParams["axes.xmargin"] = 0.01
+        else:
+            self.spines = None
 
         # BS タイトル (タイトル無しの場合は None とする)
         if self.bstitle:
@@ -177,10 +194,10 @@ class Prop:
                 1, 0, "#FFF9C4"
             )
 
-            # 利益
+            # 損失
             bottom = self._displayItems(
                 pltrg, statement["earnings"],
-                2, 0, "#DCEDC8"
+                2, 0, "red"
             )
 
             # 収益
@@ -194,17 +211,22 @@ class Prop:
         if self.pltitle:
             pltrg.set_title(self.pltitle)
 
-        # x軸
+        # x 軸
         pltrg.tick_params(labelbottom="off", bottom="off")
 
         # y 軸
         if self.noylab:
             pltrg.tick_params(labelleft="off", left="off")
 
+        # 枠線
+        if self.spines:
+            pltrg.spines["right"].set_visible(False)
+            pltrg.spines["top"].set_visible(False)
+            pltrg.spines["left"].set_visible(False)
+
         # ylim
         if self.basis:
             pltrg.set_ylim((0, self.basis))
-
 
     def mkpsbs (self, pltrg, statement):
         '''
@@ -245,13 +267,13 @@ class Prop:
             )
 
 
-        # 赤字企業の場合
+        # 欠損企業の場合
         else:
 
             # 純資産
             bottom = self._displayItems(
                 pltrg, statement["equity"],
-                1, 0, "#C8E6C9"
+                1, 0, "red"
             )
 
             # 資産
@@ -272,6 +294,12 @@ class Prop:
         # y 軸
         if self.noylab:
             pltrg.tick_params(labelleft="off", left="off")
+
+        # 枠線
+        if self.spines:
+            pltrg.spines["right"].set_visible(False)
+            pltrg.spines["top"].set_visible(False)
+            pltrg.spines["left"].set_visible(False)
 
         # title
         if self.bstitle:
