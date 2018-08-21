@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import os, argparse
+import sys, os, argparse
 import psfs
 
 if __name__ == "__main__":
@@ -9,10 +9,15 @@ if __name__ == "__main__":
     # argument parse
     p = argparse.ArgumentParser()
 
-    p.add_argument(
-        "input",
-        help=r"JSON file"
-    )
+    if sys.stdin.isatty():
+        p.add_argument(
+            "input",
+            nargs="+", # support multi args
+            help=r"JSON file"
+        )
+        isatty = True
+    else:
+        isatty = False
 
     p.add_argument(
         "--output", "-o",
@@ -23,7 +28,13 @@ if __name__ == "__main__":
     p.add_argument(
         "--encoding", "-e",
         default="utf8",
-        help=r"encoding"
+        help=r"encoding (DEFAULT: utf-8)"
+    )
+
+    p.add_argument(
+        "--extention", "-x",
+        default="png",
+        help=r"extention of image files"
     )
 
     p.add_argument(
@@ -41,7 +52,12 @@ if __name__ == "__main__":
     args = p.parse_args()
 
     # 実行
-    fs = psfs.Prop(args.input, args.encoding)
+    if isatty:
+        files = args.input
+    else:
+        files = [x.strip() for x in sys.stdin.readlines()]
+
+    fs = psfs.Prop(files[0], args.encoding)
 
     if args.title:
         fs.bstitle = "B/S"
@@ -50,10 +66,45 @@ if __name__ == "__main__":
     if args.noylab:
         fs.noylab = True
 
-    fs.prepare()
+    # 指定ファイルが 1 つのみの場合
+    if len(files) == 1:
 
-    if args.output:
-        fs.savefig(args.output)
+        fs.prepare()
+
+        if args.output:
+            if os.path.isdir(args.output):
+
+                nm = os.path.splitext(
+                    os.path.basename(files[0])
+                )[0]
+
+                fs.savefig(os.path.join(
+                    args.output, nm + "." + args.extention
+                ))
+
+            else:
+                fs.savefig(args.output)
+        else:
+            fs.show()
+            input("Press ENTER")
+
+    # 指定ファイルが複数の場合
     else:
-        fs.show()
-        input("Press ENTER")
+
+        # args.output がディレクトリである場合にのみ実行
+        if args.output and os.path.isdir(args.output):
+
+            for file in files:
+
+                fs.readFile(file, args.encoding)
+                fs.setOptions()
+                fs.prepare()
+
+                nm = os.path.splitext(
+                    os.path.basename(file)
+                )[0]
+
+                fs.savefig(os.path.join(
+                    args.output, nm + "." + args.extention
+                ))
+            

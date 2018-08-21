@@ -6,19 +6,29 @@ class Prop:
 
     def __init__ (self, path, encoding):
 
-        # initial ファイル (FS の json ファイル)
-        with open(path, "r", encoding=encoding) as rf:
-
-            self.initial = json.load(rf, object_pairs_hook=od)
-
-        # keys の格納
-        self.keys = self.initial.keys()
+        # ファイルの読み込み
+        self.readFile(path, encoding)
 
         # y 軸の最大値
         self.basis = None
 
+        # サブタイトル
+        self.bstitle = None
+        self.pltitle = None
+
         # setOptions の実行
         self.setOptions()
+
+    def readFile (self, path, encoding):
+        '''
+        initial ファイルの読み込み
+        '''
+
+        with open(path, "r", encoding=encoding) as rf:
+            self.initial = json.load(rf, object_pairs_hook=od)
+
+        # keys の格納
+        self.keys = self.initial.keys()
 
 
     def setOptions (self):
@@ -41,20 +51,24 @@ class Prop:
         plt.rcParams["axes.xmargin"] = 0
         plt.rcParams["axes.ymargin"] = 0
             
-        # x 軸の表示の有無
+        # y 軸の表示の有無
         if opt and "noylab" in opt.keys():
             self.noylab = True
         else:
             self.noylab = False
 
         # BS タイトル (タイトル無しの場合は None とする)
-        if opt and "bstitle" in opt.keys():
+        if self.bstitle:
+            pass
+        elif opt and "bstitle" in opt.keys():
             self.bstitle = opt["bstitle"]
         else:
             self.bstitle = None
 
         # PL タイトル (タイトル無しの場合は None とする)
-        if opt and "pltitle" in opt.keys():
+        if self.pltitle:
+            pass
+        elif opt and "pltitle" in opt.keys():
             self.pltitle = opt["pltitle"]
         else:
             self.pltitle = None
@@ -139,19 +153,19 @@ class Prop:
             # 利益
             bottom = self._displayItems(
                 pltrg, statement["earnings"],
-                1, 0, "#C8E6C9"
+                1, 0, "#DCEDC8"
             )
 
             # 費用
             self._displayItems(
                 pltrg, statement["expenses"],
-                1, bottom, "#ffcdd2"
+                1, bottom, "#FFF9C4"
             )
 
             # 収益
             self._displayItems(
                 pltrg, statement["income"],
-                2, 0, "#C5CAE9"
+                2, 0, "#FFE0B2"
             )
 
         # 赤字企業の場合
@@ -160,19 +174,19 @@ class Prop:
             # 費用
             self._displayItems(
                 pltrg, statement["expenses"],
-                1, 0, "#ffcdd2"
+                1, 0, "#FFF9C4"
             )
 
             # 利益
             bottom = self._displayItems(
                 pltrg, statement["earnings"],
-                2, 0, "#C8E6C9"
+                2, 0, "#DCEDC8"
             )
 
             # 収益
             self._displayItems(
                 pltrg, statement["income"],
-                2, bottom, "#C5CAE9"
+                2, bottom, "#FFE0B2"
             )
 
 
@@ -285,7 +299,9 @@ class Prop:
 
             # テキストの挿入
             tmplt.text(
-                left, bottom, entry, ha="center", va="bottom"
+                left,
+                bottom + item[entry] / 2.0,
+                entry, ha="center", va="center"
             )
 
             # bottom のカウンタを進める
