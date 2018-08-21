@@ -70,10 +70,10 @@ class Prop:
 
         # 枠線の有無
         if self.spines:
-            plt.rcParams["axes.xmargin"] = 0.01
+            plt.rcParams["axes.xmargin"] = 0.02
         elif opt and "spines" in opt.keys():
             self.spines = True
-            plt.rcParams["axes.xmargin"] = 0.01
+            plt.rcParams["axes.xmargin"] = 0.02
         else:
             self.spines = None
 
