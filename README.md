@@ -51,6 +51,21 @@ optional arguments:
 
 - `$ psfs data/template.json -o fig/template01.png`
 
+![template01](/fig/template01.png)
+
+- `$ psfs data/template.json -o fig/template02.png -t 0.05 --title -y -s`
+    - `-t 0.05`
+        - y 軸の長さが全体の 5% を下回る項目に凡例を付さない (デフォルトは 2%)
+    - `--title`
+        - 右側の図に B/S、左側の図に P/L というタイトルを付ける
+    - `-y`
+        - y 軸のメモリ・ラベルを表示しない
+    - `-s`
+        - グラフの枠線を表示しない
+
+![template02](/fig/template02.png)
+
+
 
 ## Preparation:
 
