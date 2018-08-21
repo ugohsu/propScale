@@ -47,6 +47,11 @@ optional arguments:
     - `$ psfs data/* -o fig/`
         - 財務データとして、複数のファイルを指定できる。その場合、保存先はディレクトリを指定する。
 
+## Example
+
+- `$ psfs data/template.json -o fig/template01.png`
+
+
 ## Preparation:
 
 - 読み込み用データの作成
