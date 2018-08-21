@@ -110,5 +110,3 @@ optional arguments:
         - income
         - expenses
         - earnings (省略可能)
-        - assets
-        - liabilities
