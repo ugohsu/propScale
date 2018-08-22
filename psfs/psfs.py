@@ -154,21 +154,23 @@ class Prop:
         # 作図
         for i, key in enumerate(self.table.keys()):
 
+            tmplt = self.subplots[1][i] if len(self.table) > 1 else self.subplots[1]
+
             # bs の処理
             if self.table[key] == "bs":
-                self.mkpsbs(self.subplots[1][i], self.initial[key])
+                self.mkpsbs(tmplt, self.initial[key])
 
             # pl の処理
             elif self.table[key] == "pl":
-                self.mkpspl(self.subplots[1][i], self.initial[key])
+                self.mkpspl(tmplt, self.initial[key])
 
             # タイトルの設定
             if self.title:
-                self.subplots[1][i].set_title(key)
+                tmplt.set_title(key)
 
             # x 軸の表示
             if i > 0 and not self.noylab:
-                self.subplots[1][i].tick_params(labelleft = "off")
+                tmplt.tick_params(labelleft = "off")
             
     def show (self):
         self.subplots[0].show()
