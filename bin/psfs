@@ -71,15 +71,14 @@ if __name__ == "__main__":
 
     fs = psfs.Prop(files[0], args.encoding)
 
-    if args.title:
-        fs.bstitle = "B/S"
-        fs.pltitle = "P/L"
-
     if args.noylab:
         fs.noylab = True
 
     if args.spines:
         fs.spines = True
+
+    if args.title:
+        fs.title = True
 
     fs.threshold = float(args.threshold)
 

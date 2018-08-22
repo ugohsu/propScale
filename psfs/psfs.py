@@ -9,24 +9,21 @@ class Prop:
         # ファイルの読み込み
         self.readFile(path, encoding)
 
-        # y 軸の最大値
-        self.basis = None
-
-        # サブタイトル
-        self.bstitle = None
-        self.pltitle = None
-
         # y 軸のメモリ
         self.noylab = None
 
         # グラフの枠線
         self.spines = None
 
+        # 図ごとのタイトルの設定
+        self.title = None
+
         # テキスト表示閾値
         self.threshold = None
 
         # setOptions の実行
         self.setOptions()
+
 
     def readFile (self, path, encoding):
         '''
@@ -36,8 +33,29 @@ class Prop:
         with open(path, "r", encoding=encoding) as rf:
             self.initial = json.load(rf, object_pairs_hook=od)
 
-        # keys の格納
+        # keys の取得
         self.keys = self.initial.keys()
+
+        # key とタイプの対応表の作成
+        self.setTable()
+
+        # basis の初期化
+        self.basis = None
+
+
+    def setTable (self):
+
+        self.table = od()
+
+        for key in self.keys:
+
+            # BS データの場合
+            if key == "bs" or self.initial[key]["type"] == "bs":
+                self.table[key] = "bs"
+
+            # PL データの場合
+            elif key == "pl" or self.initial[key]["type"] == "pl":
+                self.table[key] = "pl"
 
 
     def setOptions (self):
@@ -56,9 +74,17 @@ class Prop:
         else:
             plt.rcParams['font.family'] = 'IPAexGothic' 
 
+        # 枠線の有無
+        if self.spines:
+            pass
+        elif opt and "spines" in opt.keys():
+            self.spines = True
+        else:
+            self.spines = None
+
         # 余白の設定
-        plt.rcParams["axes.xmargin"] = 0
         plt.rcParams["axes.ymargin"] = 0
+        plt.rcParams["axes.xmargin"] = 0
             
         # y 軸の表示の有無
         if self.noylab:
@@ -68,15 +94,6 @@ class Prop:
         else:
             self.noylab = False
 
-        # 枠線の有無
-        if self.spines:
-            plt.rcParams["axes.xmargin"] = 0.05
-        elif opt and "spines" in opt.keys():
-            self.spines = True
-            plt.rcParams["axes.xmargin"] = 0.05
-        else:
-            self.spines = None
-
         # テキスト表示閾値
         if self.threshold:
             pass
@@ -85,21 +102,13 @@ class Prop:
         else:
             self.threshold = 0
 
-        # BS タイトル (タイトル無しの場合は None とする)
-        if self.bstitle:
+        # 図ごとのタイトルの設定
+        if self.title:
             pass
-        elif opt and "bstitle" in opt.keys():
-            self.bstitle = opt["bstitle"]
+        elif opt and "title" in opt.keys():
+            self.title = opt["title"]
         else:
-            self.bstitle = None
-
-        # PL タイトル (タイトル無しの場合は None とする)
-        if self.pltitle:
-            pass
-        elif opt and "pltitle" in opt.keys():
-            self.pltitle = opt["pltitle"]
-        else:
-            self.pltitle = None
+            self.title = None
 
     def getBasis (self):
         '''
@@ -108,31 +117,27 @@ class Prop:
         値を返す
         '''
 
-        # keys に bs, pl の両方ともが含まれていない場合は
-        # None を返す
-        if all(x not in self.keys for x in ("bs", "pl")):
-            self.basis = None
+        # 初期化
+        self.basis = 0
+        
+        # ループ処理
+        for key in self.table.keys():
 
-        # bs の資産合計もしくは負債合計の取得
-        if "bs" in self.keys:
-            bsbasis = max(
-                sum(self.initial["bs"]["assets"].values()),
-                sum(self.initial["bs"]["liabilities"].values())
-            )
-        else:
-            bsbasis = 0
+            # BS の場合
+            if self.table[key] == "bs":
+                self.basis = max(
+                    self.basis,
+                    sum(self.initial[key]["assets"].values()),
+                    sum(self.initial[key]["liabilities"].values())
+                )
 
-        # pl の収益合計もしくは費用合計の取得
-        if "pl" in self.keys:
-            plbasis = max(
-                sum(self.initial["pl"]["income"].values()),
-                sum(self.initial["pl"]["expenses"].values())
-            )
-        else:
-            plbasis = 0
-
-        # より大きな値の出力
-        self.basis = max(bsbasis, plbasis)
+            # PL の場合
+            if self.table[key] == "pl":
+                self.basis = max(
+                    self.basis,
+                    sum(self.initial[key]["income"].values()),
+                    sum(self.initial[key]["expenses"].values())
+                )
 
 
     def prepare (self):
@@ -140,36 +145,36 @@ class Prop:
         作図の準備
         '''
 
+        # basis の取得
         self.getBasis()
 
-        # bs および pl の両方が含まれている場合
-        if all(x in self.keys for x in ("bs", "pl")):
+        # subplots の設定
+        self.subplots = plt.subplots(ncols = len(self.table))
 
-            self.fig, (self.bs, self.pl) = plt.subplots(ncols=2)
-            self.mkpsbs(self.bs, self.initial["bs"])
-            self.mkpspl(self.pl, self.initial["pl"])
+        # 作図
+        for i, key in enumerate(self.table.keys()):
+
+            # bs の処理
+            if self.table[key] == "bs":
+                self.mkpsbs(self.subplots[1][i], self.initial[key])
+
+            # pl の処理
+            elif self.table[key] == "pl":
+                self.mkpspl(self.subplots[1][i], self.initial[key])
+
+            # タイトルの設定
+            if self.title:
+                self.subplots[1][i].set_title(key)
 
             # x 軸の表示
-            if not self.noylab:
-                self.pl.tick_params(labelleft="off")
-                
-        # bs のみ含まれている場合
-        elif "bs" in self.keys:
-
-            self.fig, self.bs = plt.subplots()
-            self.mkpsbs(self.bs, self.initial["bs"])
-
-        # pl のみ含まれている場合
-        elif "pl" in self.keys:
-
-            self.fig, self.pl = plt.subplots()
-            self.mkpspl(self.pl, self.initial["pl"])
+            if i > 0 and not self.noylab:
+                self.subplots[1][i].tick_params(labelleft = "off")
             
     def show (self):
-        self.fig.show()
+        self.subplots[0].show()
 
     def savefig (self, path):
-        self.fig.savefig(path, bbox_inches = "tight")
+        self.subplots[0].savefig(path, bbox_inches = "tight")
 
     def mkpspl (self, pltrg, statement):
         '''
@@ -230,10 +235,6 @@ class Prop:
                 2, bottom, "#FFE0B2"
             )
 
-
-        # title
-        if self.pltitle:
-            pltrg.set_title(self.pltitle)
 
         # x 軸
         pltrg.tick_params(labelbottom="off", bottom="off")
@@ -324,10 +325,6 @@ class Prop:
             pltrg.spines["right"].set_visible(False)
             pltrg.spines["top"].set_visible(False)
             pltrg.spines["left"].set_visible(False)
-
-        # title
-        if self.bstitle:
-            pltrg.set_title(self.bstitle)
 
         # ylim
         if self.basis:
