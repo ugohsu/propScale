@@ -22,9 +22,6 @@ class Prop:
         # basis の初期化
         self.basis = None
 
-        # 固定 basis の初期化
-        self.basis_const = None
-
 
     def readFile (self, path, encoding):
         '''
@@ -94,12 +91,12 @@ class Prop:
             self.noylab = False
 
         # 固定 basis
-        if self.basis_const:
+        if self.basis:
             pass
         elif opt and "basis" in opt.keys():
-            self.basis_const = opt["basis"]
+            self.basis = opt["basis"]
         else:
-            self.basis_const = None
+            self.basis = None
 
         # テキスト表示閾値
         if self.threshold:
@@ -125,53 +122,16 @@ class Prop:
         else:
             self.sub = None
 
-    def getBasis (self):
-        '''
-        BS の総資産の額と、PL の売上高 (もしくは収益合計)
-        を比較し、どちらが大きいか (bs or pl)、 および、
-        値を返す
-        '''
-
-        # 初期化
-        self.basis = 0
-
-        # 固定 basis が指定されている場合
-        if self.basis_const:
-
-            self.basis = self.basis_const
-
-        else:
-            
-            # ループ処理
-            for key in self.table.keys():
-
-                # BS の場合
-                if self.table[key] == "bs":
-                    self.basis = max(
-                        self.basis,
-                        sum(self.initial[key]["assets"].values()),
-                        sum(self.initial[key]["liabilities"].values())
-                    )
-
-                # PL の場合
-                if self.table[key] == "pl":
-                    self.basis = max(
-                        self.basis,
-                        sum(self.initial[key]["income"].values()),
-                        sum(self.initial[key]["expenses"].values())
-                    )
-
-
     def prepare (self):
         '''
         作図の準備
         '''
 
-        # basis の取得
-        self.getBasis()
-
         # subplots の設定
-        self.subplots = plt.subplots(ncols = len(self.table))
+        self.subplots = plt.subplots(
+            ncols = len(self.table),
+            sharey = True
+        )
 
         # メインタイトルの設定
         if self.main:

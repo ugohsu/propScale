@@ -87,7 +87,7 @@ if __name__ == "__main__":
     fs.setOptions()
 
     if args.basis:
-        fs.basis_const = float(args.basis)
+        fs.basis = float(args.basis)
 
     if args.noylab:
         fs.noylab = True
