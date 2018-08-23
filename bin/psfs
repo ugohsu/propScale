@@ -68,7 +68,7 @@ if __name__ == "__main__":
     )
 
     p.add_argument(
-        "--noylab", "-y",
+        "--noylab",
         action="store_true", default=False,
         help=r"hide ylabs"
     )
