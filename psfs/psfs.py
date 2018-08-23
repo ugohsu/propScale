@@ -130,7 +130,7 @@ class Prop:
         # subplots の設定
         self.subplots = plt.subplots(
             ncols = len(self.table),
-            sharey = True
+            sharey = self.sharey
         )
 
         # メインタイトルの設定
@@ -155,7 +155,7 @@ class Prop:
                 tmplt.set_title(key)
 
             # x 軸の表示
-            if i > 0 and not self.noylab:
+            if i > 0 and not self.noylab and self.sharey not in ("none", "col"):
                 tmplt.tick_params(labelleft = "off")
             
     def show (self):

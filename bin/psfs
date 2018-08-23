@@ -50,6 +50,12 @@ if __name__ == "__main__":
     )
 
     p.add_argument(
+        "--sharey",
+        default=True,
+        help=r"none, all, or, row (DEFAULT: all)"
+    )
+
+    p.add_argument(
         "--maintitle", "-t",
         default=None,
         help=r"main title"
@@ -97,6 +103,8 @@ if __name__ == "__main__":
 
     if not args.nosubtitle:
         fs.sub = True
+
+    fs.sharey = args.sharey
 
     fs.threshold = float(args.threshold)
 
