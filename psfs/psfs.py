@@ -22,6 +22,9 @@ class Prop:
         # basis の初期化
         self.basis = None
 
+        # 固定 basis の初期化
+        self.basis_const = None
+
 
     def readFile (self, path, encoding):
         '''
@@ -90,6 +93,14 @@ class Prop:
         else:
             self.noylab = False
 
+        # 固定 basis
+        if self.basis_const:
+            pass
+        elif opt and "basis" in opt.keys():
+            self.basis_const = opt["basis"]
+        else:
+            self.basis_const = None
+
         # テキスト表示閾値
         if self.threshold:
             pass
@@ -123,25 +134,32 @@ class Prop:
 
         # 初期化
         self.basis = 0
-        
-        # ループ処理
-        for key in self.table.keys():
 
-            # BS の場合
-            if self.table[key] == "bs":
-                self.basis = max(
-                    self.basis,
-                    sum(self.initial[key]["assets"].values()),
-                    sum(self.initial[key]["liabilities"].values())
-                )
+        # 固定 basis が指定されている場合
+        if self.basis_const:
 
-            # PL の場合
-            if self.table[key] == "pl":
-                self.basis = max(
-                    self.basis,
-                    sum(self.initial[key]["income"].values()),
-                    sum(self.initial[key]["expenses"].values())
-                )
+            self.basis = self.basis_const
+
+        else:
+            
+            # ループ処理
+            for key in self.table.keys():
+
+                # BS の場合
+                if self.table[key] == "bs":
+                    self.basis = max(
+                        self.basis,
+                        sum(self.initial[key]["assets"].values()),
+                        sum(self.initial[key]["liabilities"].values())
+                    )
+
+                # PL の場合
+                if self.table[key] == "pl":
+                    self.basis = max(
+                        self.basis,
+                        sum(self.initial[key]["income"].values()),
+                        sum(self.initial[key]["expenses"].values())
+                    )
 
 
     def prepare (self):
