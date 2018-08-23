@@ -15,8 +15,9 @@ class Prop:
         # グラフの枠線
         self.spines = None
 
-        # 図ごとのタイトルの設定
-        self.title = None
+        # タイトルの設定
+        self.main = None
+        self.sub = None
 
         # テキスト表示閾値
         self.threshold = None
@@ -102,13 +103,21 @@ class Prop:
         else:
             self.threshold = 0
 
-        # 図ごとのタイトルの設定
-        if self.title:
+        # メインタイトルの設定
+        if self.main:
             pass
-        elif opt and "title" in opt.keys():
-            self.title = opt["title"]
+        elif opt and "main" in opt.keys():
+            self.main = opt["main"]
         else:
-            self.title = None
+            self.main = None
+
+        # 図ごとのタイトルの設定
+        if self.sub:
+            pass
+        elif opt and "sub" in opt.keys():
+            self.sub = True
+        else:
+            self.sub = None
 
     def getBasis (self):
         '''
@@ -151,6 +160,10 @@ class Prop:
         # subplots の設定
         self.subplots = plt.subplots(ncols = len(self.table))
 
+        # メインタイトルの設定
+        if self.main:
+            self.subplots[0].suptitle(self.main)
+
         # 作図
         for i, key in enumerate(self.table.keys()):
 
@@ -164,8 +177,8 @@ class Prop:
             elif self.table[key] == "pl":
                 self.mkpspl(tmplt, self.initial[key])
 
-            # タイトルの設定
-            if self.title:
+            # サブタイトルの設定
+            if self.sub:
                 tmplt.set_title(key)
 
             # x 軸の表示

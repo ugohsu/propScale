@@ -38,15 +38,21 @@ if __name__ == "__main__":
     )
 
     p.add_argument(
-        "--threshold", "-t",
+        "--threshold",
         default="0.02",
         help=r"minimum ratio that can display text (DEFAULT: 0.02)"
     )
 
     p.add_argument(
-        "--title",
+        "--maintitle", "-t",
+        default=None,
+        help=r"main title"
+    )
+
+    p.add_argument(
+        "--nosubtitle",
         action="store_true", default=False,
-        help=r"make default titles (B/S and P/L)"
+        help=r"hide sub title"
     )
 
     p.add_argument(
@@ -56,7 +62,7 @@ if __name__ == "__main__":
     )
 
     p.add_argument(
-        "--spines", "-s",
+        "--nospines",
         action="store_true", default=False,
         help=r"hide spines"
     )
@@ -74,13 +80,15 @@ if __name__ == "__main__":
     if args.noylab:
         fs.noylab = True
 
-    if args.spines:
+    if args.nospines:
         fs.spines = True
 
-    if args.title:
-        fs.title = True
+    if not args.nosubtitle:
+        fs.sub = True
 
     fs.threshold = float(args.threshold)
+
+    fs.main = args.maintitle
 
     # 指定ファイルが 1 つのみの場合
     if len(files) == 1:

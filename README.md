@@ -14,11 +14,10 @@
 - `$ python3 setup.py install --user`
 
 ## Usage:
-
 ```
 usage: psfs [-h] [--output OUTPUT] [--encoding ENCODING]
-            [--extention EXTENTION] [--threshold THRESHOLD] [--title]
-            [--noylab] [--spines]
+            [--extention EXTENTION] [--threshold THRESHOLD]
+            [--maintitle MAINTITLE] [--nosubtitle] [--noylab] [--nospines]
             input [input ...]
 
 positional arguments:
@@ -32,11 +31,13 @@ optional arguments:
                         encoding (DEFAULT: utf-8)
   --extention EXTENTION, -x EXTENTION
                         extention of image files
-  --threshold THRESHOLD, -t THRESHOLD
+  --threshold THRESHOLD
                         minimum ratio that can display text (DEFAULT: 0.02)
-  --title               make default titles (B/S and P/L)
+  --maintitle MAINTITLE, -t MAINTITLE
+                        main title
+  --nosubtitle          hide sub title
   --noylab, -y          hide ylabs
-  --spines, -s          hide spines
+  --nospines            hide spines
 ```
 
 - 基本的な使い方
