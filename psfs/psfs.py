@@ -4,10 +4,7 @@ from collections import OrderedDict as od
 
 class Prop:
 
-    def __init__ (self, path, encoding):
-
-        # ファイルの読み込み
-        self.readFile(path, encoding)
+    def __init__ (self):
 
         # y 軸のメモリ
         self.noylab = None
@@ -22,8 +19,8 @@ class Prop:
         # テキスト表示閾値
         self.threshold = None
 
-        # setOptions の実行
-        self.setOptions()
+        # basis の初期化
+        self.basis = None
 
 
     def readFile (self, path, encoding):
@@ -33,15 +30,6 @@ class Prop:
 
         with open(path, "r", encoding=encoding) as rf:
             self.initial = json.load(rf, object_pairs_hook=od)
-
-        # keys の取得
-        self.keys = self.initial.keys()
-
-        # key とタイプの対応表の作成
-        self.setTable()
-
-        # basis の初期化
-        self.basis = None
 
 
     def setTable (self):
@@ -64,6 +52,13 @@ class Prop:
         self.initial["options"] から設定を取得
         '''
 
+        # keys の取得
+        self.keys = self.initial.keys()
+
+        # key とタイプの対応表の作成
+        self.setTable()
+
+        # options の調査
         if "options" in self.keys:
             opt = self.initial["options"]
         else:
@@ -356,23 +351,23 @@ class Prop:
 
             # plt への格納
             tmplt.bar(
-                left, item[entry],
+                left, abs(item[entry]),
                 color=color, edgecolor="black",
                 bottom=bottom, width=1.0
             )
 
             # テキストの挿入
-            if self.basis and (item[entry] / self.basis) < self.threshold:
+            if self.basis and (abs(item[entry]) / self.basis) < self.threshold:
                 pass
             else:
                 tmplt.text(
                     left,
-                    bottom + item[entry] / 2.0,
+                    bottom + abs(item[entry]) / 2.0,
                     entry, ha="center", va="center"
                 )
 
             # bottom のカウンタを進める
-            bottom = bottom + item[entry]
+            bottom = bottom + abs(item[entry])
 
 
         # bottom を返す

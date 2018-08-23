@@ -75,7 +75,10 @@ if __name__ == "__main__":
     else:
         files = [x.strip() for x in sys.stdin.readlines()]
 
-    fs = psfs.Prop(files[0], args.encoding)
+    fs = psfs.Prop()
+
+    fs.readFile(files[0], args.encoding)
+    fs.setOptions()
 
     if args.noylab:
         fs.noylab = True
