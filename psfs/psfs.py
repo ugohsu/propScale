@@ -162,7 +162,9 @@ class Prop:
         self.subplots[0].show()
 
     def savefig (self, path):
-        self.subplots[0].savefig(path, bbox_inches = "tight")
+        self.subplots[0].savefig(
+            path, bbox_inches = "tight", transparent = True
+        )
 
     def mkpspl (self, pltrg, statement):
         '''
