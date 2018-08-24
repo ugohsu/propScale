@@ -19,6 +19,9 @@ class Prop:
         # テキスト表示閾値
         self.threshold = None
 
+        # sharey の初期化
+        self.sharey = True
+
         # basis の初期化
         self.basis = None
 
@@ -45,6 +48,38 @@ class Prop:
             # PL データの場合
             elif key == "pl" or self.initial[key]["type"] == "pl":
                 self.table[key] = "pl"
+
+
+    def getYaxis (self):
+        '''
+        BS の総資産の額と、PL の売上高 (もしくは収益合計)
+        を比較し、どちらが大きいか (bs or pl)、 および、
+        値を返す
+        '''
+        # 初期化
+        self.yaxis = 0
+        # 固定 yaxis が指定されている場合
+        if self.basis:
+            self.yaxis = self.basis
+        else:
+            
+            # ループ処理
+            for key in self.table.keys():
+                # BS の場合
+                if self.table[key] == "bs":
+                    self.yaxis = max(
+                        self.yaxis,
+                        sum(self.initial[key]["assets"].values()),
+                        sum(self.initial[key]["liabilities"].values())
+                    )
+                    # PL の場合
+                if self.table[key] == "pl":
+                    self.yaxis = max(
+                        self.yaxis,
+                        sum(self.initial[key]["income"].values()),
+                        sum(self.initial[key]["expenses"].values())
+                    )
+
 
 
     def setOptions (self):
@@ -132,6 +167,9 @@ class Prop:
             ncols = len(self.table),
             sharey = self.sharey
         )
+
+        # yaxis の取得
+        self.getYaxis()
 
         # メインタイトルの設定
         if self.main:
@@ -337,7 +375,7 @@ class Prop:
             )
 
             # テキストの挿入
-            if self.basis and (abs(item[entry]) / self.basis) < self.threshold:
+            if (abs(item[entry]) / self.yaxis) < self.threshold:
                 pass
             else:
                 tmplt.text(
