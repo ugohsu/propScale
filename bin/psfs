@@ -32,7 +32,13 @@ if __name__ == "__main__":
     )
 
     p.add_argument(
-        "--extention", "-x",
+        "--xratio", "-x",
+        default=None,
+        help=r"ratio of figure size (xsize / ysize)"
+    )
+
+    p.add_argument(
+        "--extention",
         default="png",
         help=r"extention of image files"
     )
@@ -104,6 +110,12 @@ if __name__ == "__main__":
     if not args.nosubtitle:
         fs.sub = True
 
+    if args.xratio:
+        if args.xratio == "golden":
+            fs.xratio = 2 / (1 + 5 ** (1/2))
+        else:
+            fs.xratio = float(args.xratio)
+
     fs.sharey = args.sharey
 
     fs.threshold = float(args.threshold)
@@ -152,4 +164,9 @@ if __name__ == "__main__":
                 fs.savefig(os.path.join(
                     args.output, nm + "." + args.extention
                 ))
+
+        else:
+
+            print('set "output" option as a directory')
+
             

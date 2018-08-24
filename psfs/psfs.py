@@ -16,6 +16,9 @@ class Prop:
         self.main = None
         self.sub = None
 
+        # y 軸に対する x 軸の比率
+        self.xratio = None
+
         # テキスト表示閾値
         self.threshold = None
 
@@ -133,6 +136,18 @@ class Prop:
         else:
             self.basis = None
 
+
+        # y 軸に対する x 軸の比率
+        if self.xratio:
+            pass
+        elif opt and "threshold" in opt.keys():
+            if opt["threshold"] == "golden":
+                self.xratio = 2 / (1 + 5 ** (1/2))
+            else:
+                self.xratio = float(opt["threshold"])
+        else:
+            self.xratio = None
+        
         # テキスト表示閾値
         if self.threshold:
             pass
@@ -165,7 +180,8 @@ class Prop:
         # subplots の設定
         self.subplots = plt.subplots(
             ncols = len(self.table),
-            sharey = self.sharey
+            sharey = self.sharey,
+            figsize = self._getFigsize()
         )
 
         # yaxis の取得
@@ -390,3 +406,12 @@ class Prop:
 
         # bottom を返す
         return bottom
+
+    def _getFigsize (self):
+
+        if self.xratio:
+            ysize = plt.rcParams["figure.figsize"][1]
+            xsize = ysize * self.xratio
+            return xsize, ysize
+        else:
+            return None
