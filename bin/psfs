@@ -125,7 +125,6 @@ if __name__ == "__main__":
     # 指定ファイルが 1 つのみの場合
     if len(files) == 1:
 
-        print(fs.threshold)
         fs.prepare()
 
         if args.output:

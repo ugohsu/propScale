@@ -1,4 +1,7 @@
 {
+    "options": {
+        "main": "test"
+    },
     "B/S" : {
         "type" : "bs",
         "assets" : {

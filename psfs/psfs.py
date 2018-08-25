@@ -45,11 +45,17 @@ class Prop:
         for key in self.keys:
 
             # BS データの場合
-            if key == "bs" or self.initial[key]["type"] == "bs":
+            if key == "bs" or (
+                    "type" in self.initial[key].keys() and 
+                    self.initial[key]["type"] == "bs"
+            ):
                 self.table[key] = "bs"
 
             # PL データの場合
-            elif key == "pl" or self.initial[key]["type"] == "pl":
+            elif key == "pl" or (
+                    "type" in self.initial[key].keys() and 
+                    self.initial[key]["type"] == "pl"
+            ):
                 self.table[key] = "pl"
 
 
