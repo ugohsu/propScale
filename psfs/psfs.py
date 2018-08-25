@@ -225,7 +225,7 @@ class Prop:
         self.subplots[0].savefig(
             path, bbox_inches = "tight", transparent = True
         )
-        plt.close(subplots[0])
+        plt.close(self.subplots[0])
 
     def mkpspl (self, pltrg, statement):
         '''
