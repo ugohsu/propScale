@@ -115,10 +115,10 @@ class Prop:
             plt.rcParams['font.family'] = 'IPAexGothic' 
 
         # 枠線の有無
-        if self.spines:
-            pass
-        elif opt and "spines" in opt.keys():
+        if opt and "spines" in opt.keys():
             self.spines = True
+        elif self.spines:
+            pass
         else:
             self.spines = None
 
@@ -127,54 +127,54 @@ class Prop:
         plt.rcParams["axes.xmargin"] = 0
             
         # y 軸の表示の有無
-        if self.noylab:
-            pass
-        elif opt and "noylab" in opt.keys():
+        if opt and "noylab" in opt.keys():
             self.noylab = True
+        elif self.noylab:
+            pass
         else:
             self.noylab = False
 
         # 固定 basis
-        if self.basis:
-            pass
-        elif opt and "basis" in opt.keys():
+        if opt and "basis" in opt.keys():
             self.basis = opt["basis"]
+        elif self.basis:
+            pass
         else:
             self.basis = None
 
 
         # y 軸に対する x 軸の比率
-        if self.xratio:
-            pass
-        elif opt and "threshold" in opt.keys():
+        if opt and "threshold" in opt.keys():
             if opt["threshold"] == "golden":
                 self.xratio = 2 / (1 + 5 ** (1/2))
             else:
                 self.xratio = float(opt["threshold"])
+        elif self.xratio:
+            pass
         else:
             self.xratio = None
         
         # テキスト表示閾値
-        if self.threshold:
-            pass
-        elif opt and "threshold" in opt.keys():
+        if opt and "threshold" in opt.keys():
             self.threshold = opt["threshold"]
+        elif self.threshold:
+            pass
         else:
             self.threshold = 0
 
         # メインタイトルの設定
-        if self.main:
-            pass
-        elif opt and "main" in opt.keys():
+        if opt and "main" in opt.keys():
             self.main = opt["main"]
+        elif self.main:
+            pass
         else:
             self.main = None
 
         # 図ごとのタイトルの設定
-        if self.sub:
-            pass
-        elif opt and "sub" in opt.keys():
+        if opt and "sub" in opt.keys():
             self.sub = True
+        elif self.sub:
+            pass
         else:
             self.sub = None
 
@@ -225,6 +225,7 @@ class Prop:
         self.subplots[0].savefig(
             path, bbox_inches = "tight", transparent = True
         )
+        plt.close(subplots[0])
 
     def mkpspl (self, pltrg, statement):
         '''
