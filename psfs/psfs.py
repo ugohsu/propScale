@@ -216,7 +216,7 @@ class Prop:
 
             # x 軸の表示
             if i > 0 and not self.noylab and self.sharey not in ("none", "col"):
-                tmplt.tick_params(labelleft = "off")
+                tmplt.tick_params(labelleft = False)
             
     def show (self):
         self.subplots[0].show()
@@ -288,11 +288,11 @@ class Prop:
 
 
         # x 軸
-        pltrg.tick_params(labelbottom="off", bottom="off")
+        pltrg.tick_params(labelbottom=False, bottom=False)
 
         # y 軸
         if self.noylab:
-            pltrg.tick_params(labelleft="off", left="off")
+            pltrg.tick_params(labelleft=False, left=False)
 
         # 枠線
         if self.spines:
@@ -365,11 +365,11 @@ class Prop:
             )
 
         # x 軸
-        pltrg.tick_params(labelbottom="off", bottom="off")
+        pltrg.tick_params(labelbottom=False, bottom=False)
 
         # y 軸
         if self.noylab:
-            pltrg.tick_params(labelleft="off", left="off")
+            pltrg.tick_params(labelleft=False, left=False)
 
         # 枠線
         if self.spines:
